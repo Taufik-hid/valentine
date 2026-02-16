@@ -18,7 +18,7 @@ body{
     height:100%;
 }
 
-/* Glow background */
+/* glow background */
 body::before{
 content:"";
 position:fixed;
@@ -39,7 +39,7 @@ z-index:-1;
 100%{ transform: rotate(360deg); }
 }
 
-/* SECTION FIX IPHONE */
+/* section */
 .section{
     position:absolute;
     top:0;
@@ -57,13 +57,12 @@ z-index:-1;
     visibility:visible;
 }
 
-/* 💜 Judul ungu muda match gradient */
+/* judul */
 h1{
     color:#d8a4ff;
     text-shadow:0 0 12px rgba(255,255,255,0.6);
 }
 
-/* Button */
 button{
     padding:12px 25px;
     border:none;
@@ -91,7 +90,7 @@ img, video{
     box-shadow:0 0 20px rgba(255,255,255,0.5);
 }
 
-/* LOVE RAIN */
+/* love rain */
 .love{
     position:fixed;
     top:-30px;
@@ -117,7 +116,7 @@ img, video{
 <h1>TANGKAP HATIKU DULU ❤️</h1>
 </div>
 
-<!-- PERTANYAAN -->
+<!-- Q -->
 <div id="q1" class="section">
 <h1>KAMU SAYANG GA SAMA AKU?</h1>
 <button class="yes" onclick="next1()">IYA DONG ❤️</button>
@@ -136,7 +135,7 @@ img, video{
 <!-- VIDEO -->
 <div id="videoSec" class="section">
 <h1>KITA HARUS TERUS BERSAMA YA SAYANG ❤️</h1>
-<video id="romanticVideo" autoplay playsinline muted>
+<video id="romanticVideo" playsinline muted>
 <source src="kita.MP4" type="video/mp4">
 </video>
 <br>
@@ -151,20 +150,43 @@ img, video{
 </div>
 
 <script>
+const bgm = document.getElementById("bgm");
+const video = document.getElementById("romanticVideo");
 
-/* MUSIC */
-const bgm=document.getElementById("bgm");
-bgm.volume=0.3;
+/* initial volume */
+bgm.volume = 0.3;
 
+/* start bgm on first interaction */
 document.body.addEventListener("click",()=>{
-bgm.play().catch(()=>{});
+    bgm.play().catch(()=>{});
 },{once:true});
 
-/* VIEWPORT SAFE */
+/* helpers */
+function fadeOut(audio, target=0, speed=0.02){
+    const i = setInterval(()=>{
+        if(audio.volume > target){
+            audio.volume = Math.max(target, audio.volume - speed);
+        } else {
+            clearInterval(i);
+        }
+    },50);
+}
+
+function fadeIn(audio, target=0.3, speed=0.02){
+    const i = setInterval(()=>{
+        if(audio.volume < target){
+            audio.volume = Math.min(target, audio.volume + speed);
+        } else {
+            clearInterval(i);
+        }
+    },50);
+}
+
+/* viewport helpers */
 function vw(){ return window.innerWidth; }
 function vh(){ return window.innerHeight; }
 
-/* GAME HEARTS */
+/* game hearts */
 let count=0;
 const game=document.getElementById("game");
 
@@ -180,58 +202,42 @@ let y=Math.random()*(vh()-40);
 let dx=(Math.random()*2+1);
 let dy=(Math.random()*2+1);
 
-heart.style.left=x+"px";
-heart.style.top=y+"px";
-
 function move(){
-x+=dx;
-y+=dy;
-
+x+=dx; y+=dy;
 if(x<=0||x>=vw()-40) dx*=-1;
 if(y<=0||y>=vh()-40) dy*=-1;
-
 heart.style.left=x+"px";
 heart.style.top=y+"px";
-
 requestAnimationFrame(move);
 }
 move();
 
-heart.onclick=function(){
+heart.onclick=()=>{
 heart.remove();
 count++;
-if(count===5){
-show("q1");
-}
+if(count===5) show("q1");
 };
 
 game.appendChild(heart);
 }
 
-/* tombol lari */
+/* run buttons */
 function makeRun(id){
 const btn=document.getElementById(id);
-
-function move(){
-let x=Math.random()*(vw()-120);
-let y=Math.random()*(vh()-60);
-btn.style.left=x+"px";
-btn.style.top=y+"px";
-}
-
+const move=()=>{
+btn.style.left=Math.random()*(vw()-120)+"px";
+btn.style.top=Math.random()*(vh()-60)+"px";
+};
 btn.addEventListener("mouseover",move);
 btn.addEventListener("touchstart",move);
 }
-
 makeRun("tidak");
 makeRun("gamau");
 makeRun("skip");
 
-/* flow */
+/* navigation */
 function show(id){
-document.querySelectorAll(".section").forEach(sec=>{
-sec.classList.remove("active");
-});
+document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));
 document.getElementById(id).classList.add("active");
 }
 
@@ -239,11 +245,20 @@ function next1(){ show("foto"); }
 
 function next2(){
 show("videoSec");
-const vid=document.getElementById("romanticVideo");
-vid.muted=false;
-vid.volume=1.0;
-vid.play().catch(()=>{});
+
+/* smooth fade out music */
+fadeOut(bgm,0.05,0.01);
+
+/* play video */
+video.muted=false;
+video.volume=1;
+video.play().catch(()=>{});
 }
+
+/* when video ends → bgm fade in */
+video.addEventListener("ended",()=>{
+fadeIn(bgm,0.3,0.01);
+});
 
 function finalPage(){
 show("final");
@@ -263,7 +278,6 @@ document.body.appendChild(love);
 setTimeout(()=>love.remove(),7000);
 },300);
 }
-
 </script>
 
 </body>
