@@ -10,8 +10,8 @@ body{
     margin:0;
     font-family:Arial, sans-serif;
     text-align:center;
-    min-height:100vh;
-    overflow-x:hidden;
+    min-height:100dvh; /* FIX MOBILE */
+    overflow:hidden;
     background: linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb,#a6c1ee);
     position:relative;
 }
@@ -84,7 +84,7 @@ img, video{
 
 @keyframes fall{
 0%{transform:translateY(0) rotate(0deg); opacity:1;}
-100%{transform:translateY(110vh) rotate(360deg); opacity:0;}
+100%{transform:translateY(110dvh) rotate(360deg); opacity:0;}
 }
 </style>
 </head>
@@ -119,7 +119,7 @@ img, video{
 <!-- VIDEO -->
 <div id="videoSec" class="section">
 <h1>KITA HARUS TERUS BERSAMA YA SAYANG ❤️</h1>
-<video id="romanticVideo" autoplay playsinline>
+<video id="romanticVideo" autoplay playsinline muted>
 <source src="kita.MP4" type="video/mp4">
 </video>
 <br>
@@ -135,6 +135,10 @@ img, video{
 
 <script>
 
+/* SAFE VIEWPORT */
+function vw(){ return window.innerWidth; }
+function vh(){ return window.innerHeight; }
+
 /* MUSIC */
 const bgm=document.getElementById("bgm");
 bgm.volume=0.3;
@@ -143,7 +147,7 @@ document.body.addEventListener("click",()=>{
 bgm.play().catch(()=>{});
 },{once:true});
 
-/* GAME HEARTS */
+/* GAME HEARTS FIX MOBILE */
 let count=0;
 const game=document.getElementById("game");
 
@@ -154,8 +158,8 @@ heart.style.position="absolute";
 heart.style.fontSize="30px";
 heart.style.cursor="pointer";
 
-let x=Math.random()*(window.innerWidth-40);
-let y=Math.random()*(window.innerHeight-40);
+let x=Math.random()*(vw()-40);
+let y=Math.random()*(vh()-40);
 let dx=(Math.random()*2+1);
 let dy=(Math.random()*2+1);
 
@@ -166,8 +170,8 @@ function move(){
 x+=dx;
 y+=dy;
 
-if(x<=0||x>=window.innerWidth-40) dx*=-1;
-if(y<=0||y>=window.innerHeight-40) dy*=-1;
+if(x<=0||x>=vw()-40) dx*=-1;
+if(y<=0||y>=vh()-40) dy*=-1;
 
 heart.style.left=x+"px";
 heart.style.top=y+"px";
@@ -188,15 +192,19 @@ show("q1");
 game.appendChild(heart);
 }
 
-/* tombol lari */
+/* tombol lari FIX TOUCH */
 function makeRun(id){
 const btn=document.getElementById(id);
-btn.addEventListener("mouseover",()=>{
-let x=Math.random()*(window.innerWidth-120);
-let y=Math.random()*(window.innerHeight-60);
+
+function move(){
+let x=Math.random()*(vw()-120);
+let y=Math.random()*(vh()-60);
 btn.style.left=x+"px";
 btn.style.top=y+"px";
-});
+}
+
+btn.addEventListener("mouseover",move);
+btn.addEventListener("touchstart",move);
 }
 
 makeRun("tidak");
@@ -215,32 +223,13 @@ function next2(){
 show("videoSec");
 
 const vid=document.getElementById("romanticVideo");
-
-/* fade out musik */
-let fadeOut=setInterval(()=>{
-if(bgm.volume>0.1){
-bgm.volume-=0.02;
-}else{
-clearInterval(fadeOut);
-}
-},100);
-
+vid.muted=false;  /* unmute setelah user klik */
 vid.volume=1.0;
 vid.play().catch(()=>{});
 }
 
 function finalPage(){
 show("final");
-
-/* fade in musik */
-let fadeIn=setInterval(()=>{
-if(bgm.volume<0.3){
-bgm.volume+=0.02;
-}else{
-clearInterval(fadeIn);
-}
-},100);
-
 loveRain();
 }
 
@@ -250,7 +239,7 @@ setInterval(()=>{
 let love=document.createElement("div");
 love.className="love";
 love.innerHTML="❤️";
-love.style.left=Math.random()*window.innerWidth+"px";
+love.style.left=Math.random()*vw()+"px";
 love.style.animationDuration=(4+Math.random()*3)+"s";
 love.style.fontSize=(18+Math.random()*20)+"px";
 document.body.appendChild(love);
