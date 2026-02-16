@@ -16,7 +16,7 @@ body{
     position:relative;
 }
 
-/* layer animasi lembut */
+/* background glow smooth */
 body::before{
 content:"";
 position:fixed;
@@ -24,9 +24,10 @@ top:-50%;
 left:-50%;
 width:200%;
 height:200%;
-background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent 40%),
-            radial-gradient(circle at 70% 70%, rgba(255,255,255,0.2), transparent 40%);
-animation: floatBg 20s linear infinite;
+background:
+radial-gradient(circle at 30% 30%, rgba(255,255,255,0.25), transparent 40%),
+radial-gradient(circle at 70% 70%, rgba(255,255,255,0.2), transparent 40%);
+animation: floatBg 25s linear infinite;
 pointer-events:none;
 z-index:-1;
 }
@@ -67,7 +68,7 @@ button{
 }
 
 img, video{
-    max-width:280px;
+    max-width:300px;
     margin-top:20px;
     border-radius:20px;
     box-shadow:0 0 20px rgba(255,255,255,0.5);
@@ -94,36 +95,41 @@ img, video{
 <source src="romance.mp3" type="audio/mpeg">
 </audio>
 
+<!-- GAME -->
 <div id="game" class="section" style="display:block;">
-<h1>TANGKAP HATIKU DULU ❤️</h1>
+<h1>Tangkap 5 hati dulu ❤️</h1>
 </div>
 
+<!-- PERTANYAAN -->
 <div id="q1" class="section">
-<h1>KAMU SAYANG GA SAMA AKU?</h1>
-<button class="yes" onclick="next1()">IYA DONG ❤️</button>
-<button class="run" id="tidak">GA BLAS 😜</button>
+<h1>kamu sayang gk sama aku?</h1>
+<button class="yes" onclick="next1()">Iya ❤️</button>
+<button class="run" id="tidak">Tidak 😜</button>
 </div>
 
+<!-- FOTO -->
 <div id="foto" class="section">
-<h1>AKU JUGA SAYANG KO SAMA KAMU ❤️</h1>
+<h1>aku juga sayang sama kamu kok ❤️</h1>
 <img src="cium.jpg">
 <br>
-<button class="yes" onclick="next2()">LANJUT SAYANG 😘</button>
-<button class="run" id="gamau">OGAH 😆</button>
+<button class="yes" onclick="next2()">Lanjut yok sayang 😘</button>
+<button class="run" id="gamau">Gamau 😆</button>
 </div>
 
+<!-- VIDEO -->
 <div id="videoSec" class="section">
-<h1>KITA HARUS SAMA-SAMA TERUS YA SAYANG ❤️</h1>
-<video controls>
+<h1>kita terus sama-sama ya sayang ❤️</h1>
+<video id="romanticVideo" autoplay playsinline>
 <source src="kita.MP4" type="video/mp4">
 </video>
 <br>
-<button class="yes" onclick="finalPage()">SIAP SAYANGKU ❤️</button>
-<button class="run" id="skip">SKIP 😝</button>
+<button class="yes" onclick="finalPage()">iya sayang ❤️</button>
+<button class="run" id="skip">skip 😝</button>
 </div>
 
+<!-- FINAL -->
 <div id="final" class="section">
-<h1>I LOVE YOU AMBAR ❤️</h1>
+<h1>i love you ambar ❤️</h1>
 <img src="kita.jpg">
 </div>
 
@@ -131,6 +137,8 @@ img, video{
 
 /* MUSIC */
 const bgm=document.getElementById("bgm");
+bgm.volume=0.3;
+
 document.body.addEventListener("click",()=>{
 bgm.play().catch(()=>{});
 },{once:true});
@@ -148,20 +156,18 @@ heart.style.cursor="pointer";
 
 let x=Math.random()*(window.innerWidth-40);
 let y=Math.random()*(window.innerHeight-40);
-
 let dx=(Math.random()*2+1);
 let dy=(Math.random()*2+1);
 
 heart.style.left=x+"px";
 heart.style.top=y+"px";
 
-/* animasi gerak smooth */
 function move(){
 x+=dx;
 y+=dy;
 
-if(x<=0 || x>=window.innerWidth-40) dx*=-1;
-if(y<=0 || y>=window.innerHeight-40) dy*=-1;
+if(x<=0||x>=window.innerWidth-40) dx*=-1;
+if(y<=0||y>=window.innerHeight-40) dy*=-1;
 
 heart.style.left=x+"px";
 heart.style.top=y+"px";
@@ -170,7 +176,6 @@ requestAnimationFrame(move);
 }
 move();
 
-/* klik */
 heart.onclick=function(){
 heart.remove();
 count++;
@@ -205,10 +210,37 @@ document.getElementById(id).style.display="block";
 }
 
 function next1(){ show("foto"); }
-function next2(){ show("videoSec"); }
+
+function next2(){
+show("videoSec");
+
+const vid=document.getElementById("romanticVideo");
+
+/* fade out musik */
+let fadeOut=setInterval(()=>{
+if(bgm.volume>0.1){
+bgm.volume-=0.02;
+}else{
+clearInterval(fadeOut);
+}
+},100);
+
+vid.volume=1.0;
+vid.play().catch(()=>{});
+}
 
 function finalPage(){
 show("final");
+
+/* fade in musik */
+let fadeIn=setInterval(()=>{
+if(bgm.volume<0.3){
+bgm.volume+=0.02;
+}else{
+clearInterval(fadeIn);
+}
+},100);
+
 loveRain();
 }
 
