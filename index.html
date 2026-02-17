@@ -6,19 +6,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{
+html, body{
     margin:0;
+    padding:0;
+    height:100%;
     font-family:Arial, sans-serif;
     text-align:center;
-    min-height:100vh;
     overflow-x:hidden;
     background: linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb,#a6c1ee);
-    background-attachment: fixed; /* ini fix iPhone */
-    position:relative;
+    background-attachment: fixed;
+    -webkit-backface-visibility: hidden;
+    -webkit-transform: translate3d(0,0,0);
 }
 
-
-/* background glow smooth */
 body::before{
 content:"";
 position:fixed;
@@ -58,16 +58,8 @@ button{
     font-size:16px;
 }
 
-.yes{
-    background:#ff4d6d;
-    color:white;
-}
-
-.run{
-    background:#444;
-    color:white;
-    position:fixed;
-}
+.yes{ background:#ff4d88; color:white; }
+.run{ background:#444; color:white; position:fixed; }
 
 img, video{
     max-width:300px;
@@ -76,7 +68,6 @@ img, video{
     box-shadow:0 0 20px rgba(255,255,255,0.5);
 }
 
-/* love rain */
 .love{
     position:fixed;
     top:-30px;
@@ -97,156 +88,90 @@ img, video{
 <source src="romance.mp3" type="audio/mpeg">
 </audio>
 
-<!-- GAME -->
 <div id="game" class="section" style="display:block;">
-<h1>Tangkap 5 hati dulu ❤️</h1>
+<h1>TANGKAP HATIKU DULU ❤️</h1>
 </div>
 
-<!-- PERTANYAAN -->
 <div id="q1" class="section">
-<h1>kamu sayang gk sama aku?</h1>
-<button class="yes" onclick="next1()">Iya ❤️</button>
-<button class="run" id="tidak">Tidak 😜</button>
+<h1>KAMU SAYANG GA SAMA AKU?</h1>
+<button class="yes" onclick="next1()">IYA DONG ❤️</button>
+<button class="run" id="tidak">GA DULU 😜</button>
 </div>
 
-<!-- FOTO -->
 <div id="foto" class="section">
-<h1>aku juga sayang sama kamu kok ❤️</h1>
+<h1>AKU JUGA SAYANG BANGET SAMA KAMU ❤️</h1>
 <img src="cium.jpg">
 <br>
-<button class="yes" onclick="next2()">Lanjut yok sayang 😘</button>
-<button class="run" id="gamau">Gamau 😆</button>
+<button class="yes" onclick="next2()">LANJUT YOK SAYANG 😘</button>
+<button class="run" id="gamau">OGAH 😆</button>
 </div>
 
-<!-- VIDEO -->
 <div id="videoSec" class="section">
-<h1>kita terus sama-sama ya sayang ❤️</h1>
-<video id="romanticVideo" autoplay playsinline>
+<h1>KITA HARUS TERUS BERSAMA YA SAYANG ❤️</h1>
+<video id="romanticVideo" playsinline>
 <source src="kita.MP4" type="video/mp4">
 </video>
 <br>
-<button class="yes" onclick="finalPage()">iya sayang ❤️</button>
+<button class="yes" onclick="finalPage()">PASTI SAYANG ❤️</button>
 <button class="run" id="skip">skip 😝</button>
 </div>
 
-<!-- FINAL -->
 <div id="final" class="section">
-<h1>i love you ambar ❤️</h1>
+<h1>I LOVE YOU AMBAR ❤️</h1>
 <img src="kita.jpg">
 </div>
 
 <script>
-
-/* MUSIC */
 const bgm=document.getElementById("bgm");
 bgm.volume=0.3;
+document.body.addEventListener("click",()=>{ bgm.play().catch(()=>{}); },{once:true});
 
-document.body.addEventListener("click",()=>{
-bgm.play().catch(()=>{});
-},{once:true});
-
-/* GAME HEARTS */
 let count=0;
 const game=document.getElementById("game");
-
 for(let i=0;i<5;i++){
 let heart=document.createElement("div");
 heart.innerHTML="❤️";
 heart.style.position="absolute";
 heart.style.fontSize="30px";
 heart.style.cursor="pointer";
-
 let x=Math.random()*(window.innerWidth-40);
 let y=Math.random()*(window.innerHeight-40);
 let dx=(Math.random()*2+1);
 let dy=(Math.random()*2+1);
-
 heart.style.left=x+"px";
 heart.style.top=y+"px";
-
 function move(){
-x+=dx;
-y+=dy;
-
+x+=dx; y+=dy;
 if(x<=0||x>=window.innerWidth-40) dx*=-1;
 if(y<=0||y>=window.innerHeight-40) dy*=-1;
-
 heart.style.left=x+"px";
 heart.style.top=y+"px";
-
 requestAnimationFrame(move);
 }
 move();
-
 heart.onclick=function(){
-heart.remove();
-count++;
-if(count===5){
-game.style.display="none";
-show("q1");
-}
+heart.remove(); count++;
+if(count===5) show("q1");
 };
-
 game.appendChild(heart);
 }
 
-/* tombol lari */
 function makeRun(id){
 const btn=document.getElementById(id);
-btn.addEventListener("mouseover",()=>{
-let x=Math.random()*(window.innerWidth-120);
-let y=Math.random()*(window.innerHeight-60);
-btn.style.left=x+"px";
-btn.style.top=y+"px";
-});
+btn.addEventListener("mouseover",()=>{ btn.style.left=Math.random()*(window.innerWidth-120)+"px"; btn.style.top=Math.random()*(window.innerHeight-60)+"px"; });
+btn.addEventListener("touchstart",()=>{ btn.style.left=Math.random()*(window.innerWidth-120)+"px"; btn.style.top=Math.random()*(window.innerHeight-60)+"px"; });
 }
+makeRun("tidak"); makeRun("gamau"); makeRun("skip");
 
-makeRun("tidak");
-makeRun("gamau");
-makeRun("skip");
-
-/* flow */
 function show(id){
-document.querySelectorAll(".section").forEach(sec=>sec.style.display="none");
+document.querySelectorAll(".section").forEach(s=>s.style.display="none");
 document.getElementById(id).style.display="block";
 }
 
 function next1(){ show("foto"); }
+function next2(){ show("videoSec"); fadeOutAudio(bgm,0.05,0.01); const vid=document.getElementById("romanticVideo"); vid.volume=1; vid.play().catch(()=>{});}
+function finalPage(){ show("final"); fadeInAudio(bgm,0.3,0.01); loveRain(); }
 
-function next2(){
-show("videoSec");
-
-const vid=document.getElementById("romanticVideo");
-
-/* fade out musik */
-let fadeOut=setInterval(()=>{
-if(bgm.volume>0.1){
-bgm.volume-=0.02;
-}else{
-clearInterval(fadeOut);
-}
-},100);
-
-vid.volume=1.0;
-vid.play().catch(()=>{});
-}
-
-function finalPage(){
-show("final");
-
-/* fade in musik */
-let fadeIn=setInterval(()=>{
-if(bgm.volume<0.3){
-bgm.volume+=0.02;
-}else{
-clearInterval(fadeIn);
-}
-},100);
-
-loveRain();
-}
-
-/* love rain */
 function loveRain(){
 setInterval(()=>{
 let love=document.createElement("div");
@@ -260,6 +185,20 @@ setTimeout(()=>love.remove(),7000);
 },300);
 }
 
+function fadeOutAudio(audio,target=0,speed=0.02){
+let f=setInterval(()=>{
+if(audio.volume>target){ audio.volume=Math.max(target,audio.volume-speed); }
+else{ clearInterval(f); }},50);
+}
+
+function fadeInAudio(audio,target=0.3,speed=0.02){
+audio.volume=0; audio.play().catch(()=>{});
+let f=setInterval(()=>{
+if(audio.volume<target){ audio.volume=Math.min(target,audio.volume+speed); }
+else{ clearInterval(f); }},50);
+}
+
+document.getElementById("romanticVideo").addEventListener("ended",()=>{ fadeInAudio(bgm,0.3,0.01); });
 </script>
 
 </body>
